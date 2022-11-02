@@ -24,8 +24,8 @@ from PyPDF2 import PdfFileMerger
 from pathlib import Path
 
 ##### Establecer Numero de MAteria y de Tema
-numeroDeMateriaAScrapear = 4
-numeroDeTemaAScrapear = 6
+numeroDeMateriaAScrapear = 2
+numeroDeTemaAScrapear = 1
 
 # Funciones
 
@@ -134,12 +134,18 @@ def imprimirHTMLScrollable():
     # Mientras no tenga el aria label en la lista, imprimir
     while newAriaLabel != aria_labels_Archive[0]:
         # Encontrar el Boton Down y presionar
-        driver.find_element(By.XPATH, "//div[starts-with(@id,'pgdn_') and @class='cp-frameset']").click()
+        try:
+            botonDown = driver.find_element(By.XPATH, "//div[starts-with(@id,'pgdn_') and @class='cp-frameset']")
+            botonDown.click()
+        except:
+            driver.execute_script("arguments[0].click();", botonDown)
+        else:
+            print("No se puedo hacer click en siguiente")
         # Buscar el texto vsible y aniadirlo al array. 
         for bloque in bloquesTexto:
             styleBloque = bloque.get_attribute("style")
             altoBloque = bloque.size['height']
-            if altoBloque > 40 and "visibility: hidden" not in styleBloque:
+            if altoBloque > 120 and "visibility: hidden" not in styleBloque:
                 aria_labels_Archive.append(bloque.get_attribute("aria-label"))
                 newAriaLabel = bloque.get_attribute("aria-label")
         
@@ -326,8 +332,8 @@ prefs = {
     'printing.print_preview_sticky_settings.appState': json.dumps(print_settings),
     "download.prompt_for_download": False,
     "profile.default_content_setting_values.automatic_download": 1,
-    "download.default_directory": "/Users/joseignacio/Desktop/vacaciones laptop/Scraping/PDF/",
-    "savefile.default_directory": "/Users/joseignacio/Desktop/vacaciones laptop/Scraping/PDF/",
+    "download.default_directory": "/Users/joseignacio/Desktop/1.Proyectos/Scraping/PDF/",
+    "savefile.default_directory": "/Users/joseignacio/Desktop/1.Proyectos/Scraping/PDF/",
     "download.directory_upgrade": True,
     "safebrowsing.enabled": True
 }
