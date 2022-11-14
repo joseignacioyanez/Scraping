@@ -24,8 +24,8 @@ from PyPDF2 import PdfFileMerger
 from pathlib import Path
 
 ##### Establecer Numero de MAteria y de Tema
-numeroDeMateriaAScrapear = 2
-numeroDeTemaAScrapear = 1
+numeroDeMateriaAScrapear = 0
+numeroDeTemaAScrapear = 2
 
 # Funciones
 
