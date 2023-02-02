@@ -2,8 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
+#from webdriver_manager.chrome import ChromeDriverManager
+service = Service(executable_path="./chromedriver")
 
 from selenium.webdriver.chrome.options import Options
 
@@ -24,8 +25,8 @@ from PyPDF2 import PdfFileMerger
 from pathlib import Path
 
 ##### Establecer Numero de MAteria y de Tema
-numeroDeMateriaAScrapear = 0
-numeroDeTemaAScrapear = 2
+numeroDeMateriaAScrapear = 3
+numeroDeTemaAScrapear = 12
 
 # Funciones
 
@@ -215,19 +216,40 @@ def imprimirTema(tema):
     time.sleep(5)
 
     ## TODO
-    ## Hacer que esto solo pase si ya he hecho la autoevaluacion
+    ## Hacer que esto solo pase si ya he hecho la autoevaluacion OJO!!!!!
     ## Abrir tema si no se abre automaticamente
-    # driver.find_element(By.XPATH, "//ul[@class='main_branch']/li/div").click()
+    driver.find_element(By.XPATH, "//ul[@class='main_branch']/li/div").click()
 
-    #time.sleep(5)
+    time.sleep(8)
 
     # Cambio al iframe 
-    iframe = driver.find_element(By.TAG_NAME, "iframe")
-    driver.switch_to.frame(iframe)
+    for i in range(30):
+        for attempt in range(10):
+            try:
+                iframe = driver.find_elements(By.TAG_NAME,'iframe')[1]
+                driver.switch_to.frame(iframe)
+            except:
+                continue
+            else:
+                break
+        else:
+            print("Se intento muchas veces y no se pudo cambiar el iframe")
+
+    print("Estoy en el iframe")
 
     # Imagen Play iniciar tema
-    time.sleep(8)
-    driver.find_element(By.ID, "playImage").click()
+    time.sleep(5)
+    for i in range(30):
+        for attempt in range(10):
+            try:
+                driver.find_element(By.ID, "playImage").click()
+            except:
+                continue
+            else:
+                break
+        else:
+            print("Se intento muchas veces y no se pudo hacer click en el playImage")
+    
     
     # Si se resume en media unidad, abrir menu e ir a titulo
     time.sleep(2)
@@ -287,7 +309,7 @@ def imprimirTema(tema):
             # regresando al default antes para poder ir a sgte pagina
             driver.switch_to.default_content()
             # cambiar iframe driver
-            iframePrimario = driver.find_element(By.TAG_NAME, "iframe")
+            iframePrimario = driver.find_elements(By.TAG_NAME,'iframe')[1]
             driver.switch_to.frame(iframePrimario)
             # Click en la siguiente pagina
             driver.find_element(By.XPATH, "//div[starts-with(@id, 'eLB_skin01_next') and @class='cp-frameset']").click()
@@ -341,7 +363,7 @@ prefs = {
 options= Options()
 options.add_experimental_option('prefs', prefs)
 options.add_argument('--kiosk-printing')
-driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
+driver = webdriver.Chrome(service=service, options=options)
 # De aqui arriba elimine esto: , options=options comoa tributo
 driver.set_window_position(0, 0)
 driver.set_window_size(1920, 1080)
